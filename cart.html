@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cart – CodeAlpha Store</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="nav" id="nav"></header>
+  <main>
+    <h1>Shopping Cart</h1>
+    <div id="cart" class="panel">Loading...</div>
+  </main>
+  <footer>CodeAlpha Full Stack Internship – Task 1</footer>
+  <script src="/js/app.js"></script>
+  <script>
+    const S = window.Store;
+    const box = document.getElementById('cart');
+
+    async function render() {
+      const cart = S.getCart();
+      const ids = Object.keys(cart);
+      if (!ids.length) {
+        box.innerHTML = '<p>Your cart is empty.</p><a class="btn" href="/index.html">Continue shopping</a>';
+        return;
+      }
+      const rows = [];
+      let total = 0;
+      for (const id of ids) {
+        try {
+          const p = (await S.api('/api/products/' + encodeURIComponent(id))).product;
+          const qty = Math.min(Number(cart[id]) || 1, Math.max(p.stock, 0));
+          if (qty < 1) { S.setQty(id, 0); continue; }
+          if (qty !== cart[id]) S.setQty(id, qty);
+          total += p.price * qty;
+          rows.push(
+            '<div class="row"><div class="emoji">' + S.esc(p.emoji) + '</div>' +
+            '<div class="info"><a href="/product.html?id=' + p.id + '"><strong>' + S.esc(p.name) + '</strong></a><br>' +
+            '<span class="muted">' + S.money(p.price) + ' each</span></div>' +
+            '<div class="qty"><button data-dec="' + p.id + '">−</button><strong>' + qty + '</strong>' +
+            '<button data-inc="' + p.id + '" data-max="' + p.stock + '">+</button></div>' +
+            '<strong style="width:90px;text-align:right">' + S.money(p.price * qty) + '</strong>' +
+            '<button class="btn danger" data-del="' + p.id + '">Remove</button></div>');
+        } catch (e) {
+          S.setQty(id, 0); // product no longer exists
+        }
+      }
+      if (!rows.length) { render(); return; }
+      box.innerHTML = rows.join('') +
+        '<div class="summary"><span>Total</span><span>' + S.money(total) + '</span></div>' +
+        '<p style="text-align:right;margin-top:18px"><a class="btn secondary" href="/index.html">Continue shopping</a> ' +
+        '<a class="btn" href="/checkout.html">Proceed to checkout</a></p>';
+    }
+
+    box.addEventListener('click', (e) => {
+      const cart = S.getCart();
+      const dec = e.target.closest('[data-dec]'), inc = e.target.closest('[data-inc]'), del = e.target.closest('[data-del]');
+      if (dec) S.setQty(dec.dataset.dec, (Number(cart[dec.dataset.dec]) || 1) - 1);
+      else if (inc) S.setQty(inc.dataset.inc, Math.min((Number(cart[inc.dataset.inc]) || 0) + 1, Number(inc.dataset.max)));
+      else if (del) S.setQty(del.dataset.del, 0);
+      else return;
+      render();
+    });
+
+    S.renderNav();
+    render();
+  </script>
+</body>
+</html>

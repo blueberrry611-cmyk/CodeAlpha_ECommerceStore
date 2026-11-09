@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout – CodeAlpha Store</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="nav" id="nav"></header>
+  <main>
+    <h1>Checkout</h1>
+    <div class="panel">
+      <div id="summary" class="muted">Loading...</div>
+      <form id="form" class="form" style="max-width:none;margin:10px 0 0" novalidate>
+        <div class="two">
+          <div><label for="name">Full name</label><input id="name" required></div>
+          <div><label for="phone">Phone</label><input id="phone" required></div>
+        </div>
+        <label for="address">Address</label><textarea id="address" rows="2" required></textarea>
+        <div class="two">
+          <div><label for="city">City</label><input id="city" required></div>
+          <div><label for="pincode">Pincode</label><input id="pincode" required></div>
+        </div>
+        <p class="muted">Payment: Cash on delivery (demo store, no real payments).</p>
+        <button class="btn" id="place" type="submit">Place order</button>
+        <div id="msg" class="msg"></div>
+      </form>
+    </div>
+  </main>
+  <footer>CodeAlpha Full Stack Internship – Task 1</footer>
+  <script src="/js/app.js"></script>
+  <script>
+    const S = window.Store;
+
+    (async function () {
+      const user = await S.renderNav();
+      if (!user) { location.href = '/login.html?next=/checkout.html'; return; }
+      document.getElementById('name').value = user.name;
+
+      const cart = S.getCart();
+      const ids = Object.keys(cart);
+      if (!ids.length) { location.href = '/cart.html'; return; }
+
+      let total = 0, html = '';
+      for (const id of ids) {
+        try {
+          const p = (await S.api('/api/products/' + encodeURIComponent(id))).product;
+          const qty = Number(cart[id]) || 1;
+          total += p.price * qty;
+          html += '<div class="row"><div class="emoji">' + S.esc(p.emoji) + '</div><div class="info">' + S.esc(p.name) +
+                  ' × ' + qty + '</div><strong>' + S.money(p.price * qty) + '</strong></div>';
+        } catch (e) { /* skip missing product; server re-validates */ }
+      }
+      document.getElementById('summary').innerHTML = html + '<div class="summary"><span>Total</span><span>' + S.money(total) + '</span></div>';
+
+      document.getElementById('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('place');
+        btn.disabled = true;
+        try {
+          const items = Object.keys(S.getCart()).map((id) => ({ productId: Number(id), qty: Number(S.getCart()[id]) }));
+          const res = await S.api('/api/orders', {
+            method: 'POST',
+            body: {
+              items: items,
+              shipping: {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                city: document.getElementById('city').value,
+                pincode: document.getElementById('pincode').value
+              }
+            }
+          });
+          S.clearCart();
+          location.href = '/orders.html?placed=' + res.order.id;
+        } catch (err) {
+          if (err.status === 401) { location.href = '/login.html?next=/checkout.html'; return; }
+          S.showMsg('msg', err.message, 'error');
+          btn.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

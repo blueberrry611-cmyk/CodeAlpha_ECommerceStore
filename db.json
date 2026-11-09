@@ -1,0 +1,120 @@
+{
+  "counters": {
+    "users": 0,
+    "products": 12,
+    "orders": 0
+  },
+  "users": [],
+  "sessions": {},
+  "orders": [],
+  "products": [
+    {
+      "id": 1,
+      "name": "Wireless Headphones",
+      "category": "Electronics",
+      "price": 2499,
+      "stock": 25,
+      "emoji": "🎧",
+      "description": "Over-ear Bluetooth headphones with deep bass, 30-hour battery life and a built-in microphone."
+    },
+    {
+      "id": 2,
+      "name": "Smart Watch",
+      "category": "Electronics",
+      "price": 3999,
+      "stock": 15,
+      "emoji": "⌚",
+      "description": "Fitness tracker with heart-rate monitor, sleep tracking, and a bright AMOLED display."
+    },
+    {
+      "id": 3,
+      "name": "Bluetooth Speaker",
+      "category": "Electronics",
+      "price": 1799,
+      "stock": 30,
+      "emoji": "🔊",
+      "description": "Portable waterproof speaker with 360° sound and 12 hours of playtime."
+    },
+    {
+      "id": 4,
+      "name": "Laptop Backpack",
+      "category": "Fashion",
+      "price": 1299,
+      "stock": 40,
+      "emoji": "🎒",
+      "description": "Water-resistant backpack with padded laptop sleeve and USB charging port."
+    },
+    {
+      "id": 5,
+      "name": "Running Shoes",
+      "category": "Fashion",
+      "price": 2999,
+      "stock": 20,
+      "emoji": "👟",
+      "description": "Lightweight breathable running shoes with cushioned sole for daily training."
+    },
+    {
+      "id": 6,
+      "name": "Sunglasses",
+      "category": "Fashion",
+      "price": 899,
+      "stock": 50,
+      "emoji": "🕶️",
+      "description": "UV400 protected polarized sunglasses with a durable lightweight frame."
+    },
+    {
+      "id": 7,
+      "name": "Coffee Mug Set",
+      "category": "Home",
+      "price": 599,
+      "stock": 60,
+      "emoji": "☕",
+      "description": "Set of 4 ceramic mugs, microwave and dishwasher safe."
+    },
+    {
+      "id": 8,
+      "name": "Desk Lamp",
+      "category": "Home",
+      "price": 1099,
+      "stock": 35,
+      "emoji": "💡",
+      "description": "LED desk lamp with 3 brightness levels, touch control and flexible neck."
+    },
+    {
+      "id": 9,
+      "name": "Yoga Mat",
+      "category": "Sports",
+      "price": 799,
+      "stock": 45,
+      "emoji": "🧘",
+      "description": "Non-slip 6mm thick yoga mat with carrying strap."
+    },
+    {
+      "id": 10,
+      "name": "Water Bottle",
+      "category": "Sports",
+      "price": 449,
+      "stock": 80,
+      "emoji": "🍶",
+      "description": "Insulated stainless steel bottle that keeps drinks cold for 24 hours."
+    },
+    {
+      "id": 11,
+      "name": "Notebook Pack",
+      "category": "Stationery",
+      "price": 299,
+      "stock": 100,
+      "emoji": "📓",
+      "description": "Pack of 5 ruled notebooks with 200 pages each."
+    },
+    {
+      "id": 12,
+      "name": "Gel Pen Set",
+      "category": "Stationery",
+      "price": 199,
+      "stock": 120,
+      "emoji": "🖊️",
+      "description": "Set of 12 smooth-writing gel pens in assorted colours."
+    }
+  ]
+}

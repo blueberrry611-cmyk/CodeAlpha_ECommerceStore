@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login – CodeAlpha Store</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="nav" id="nav"></header>
+  <main>
+    <form id="form" class="form panel" novalidate>
+      <h1>Login</h1>
+      <label for="email">Email</label><input id="email" type="email" autocomplete="email" required>
+      <label for="password">Password</label><input id="password" type="password" autocomplete="current-password" required>
+      <button class="btn" type="submit">Login</button>
+      <div id="msg" class="msg"></div>
+      <p class="muted" style="text-align:center">New here? <a href="/register.html">Create an account</a></p>
+    </form>
+  </main>
+  <script src="/js/app.js"></script>
+  <script>
+    const S = window.Store;
+    S.renderNav();
+
+    function nextUrl() {
+      const n = new URLSearchParams(location.search).get('next') || '/index.html';
+      return n.charAt(0) === '/' && n.charAt(1) !== '/' ? n : '/index.html'; // same-site paths only
+    }
+
+    document.getElementById('form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await S.api('/api/login', {
+          method: 'POST',
+          body: { email: document.getElementById('email').value, password: document.getElementById('password').value }
+        });
+        location.href = nextUrl();
+      } catch (err) {
+        S.showMsg('msg', err.message, 'error');
+      }
+    });
+  </script>
+</body>
+</html>

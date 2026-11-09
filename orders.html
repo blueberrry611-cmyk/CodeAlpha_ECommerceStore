@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Orders – CodeAlpha Store</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header class="nav" id="nav"></header>
+  <main>
+    <h1>My Orders</h1>
+    <div id="banner" class="msg"></div>
+    <div id="orders">Loading...</div>
+  </main>
+  <footer>CodeAlpha Full Stack Internship – Task 1</footer>
+  <script src="/js/app.js"></script>
+  <script>
+    const S = window.Store;
+    const box = document.getElementById('orders');
+
+    (async function () {
+      const user = await S.renderNav();
+      if (!user) { location.href = '/login.html?next=/orders.html'; return; }
+
+      const placed = new URLSearchParams(location.search).get('placed');
+      if (placed) S.showMsg('banner', 'Thank you! Your order #' + placed + ' has been placed.', 'success');
+
+      try {
+        const orders = (await S.api('/api/orders')).orders;
+        if (!orders.length) {
+          box.innerHTML = '<div class="panel"><p>You have no orders yet.</p><a class="btn" href="/index.html">Start shopping</a></div>';
+          return;
+        }
+        box.innerHTML = orders.map((o) =>
+          '<div class="panel order"><div class="head"><div><strong>Order #' + o.id + '</strong> ' +
+          '<span class="muted">' + S.esc(new Date(o.createdAt).toLocaleString()) + '</span></div>' +
+          '<span class="status">' + S.esc(o.status) + '</span></div>' +
+          o.items.map((i) =>
+            '<div class="row"><div class="emoji">' + S.esc(i.emoji) + '</div><div class="info">' + S.esc(i.name) +
+            ' × ' + i.qty + '</div><strong>' + S.money(i.subtotal) + '</strong></div>').join('') +
+          '<div class="summary"><span>Total</span><span>' + S.money(o.total) + '</span></div>' +
+          '<p class="muted">Ship to: ' + S.esc(o.shipping.name) + ', ' + S.esc(o.shipping.address) + ', ' +
+          S.esc(o.shipping.city) + ' ' + S.esc(o.shipping.pincode) + ' · ' + S.esc(o.shipping.phone) + '</p></div>').join('');
+      } catch (e) {
+        box.innerHTML = '<p class="bad">' + S.esc(e.message) + '</p>';
+      }
+    })();
+  </script>
+</body>
+</html>
